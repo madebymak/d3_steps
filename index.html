@@ -59,6 +59,45 @@
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+        //load data
+        d3.tsv("data.tsv", function(err, data) {
+
+          //converts data from file to usable JS data
+          data.forEach(function(d) {
+            d.date = parseDate(d.date);
+            //the "+" converts string to number in JS
+            d.steps = +d.steps;
+          });
+
+          //set min and max dates for x axis
+          x.domain(d3.extent(data, function(d) {
+            return d.date;
+          }));
+
+          //set min and max steps for y axis
+          y.domain(d3.extent(data, function(d) {
+            return d.steps;
+          }));
+
+          svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+
+					svg.append("g")
+						.attr("class", "y axis")
+						.call(yAxis)
+						.append("text")
+						.attr("transform", "rotate(-90)")
+						.attr("y", 6)
+						.attr("dy", ".71em")
+						.style("text-anchor", "end")
+						.text("Steps");
+
+
+        })
+
     </script>
   </body>
 </html>
