@@ -88,15 +88,21 @@
 					svg.append("g")
 						.attr("class", "y axis")
 						.call(yAxis)
-						.append("text")
-						.attr("transform", "rotate(-90)")
-						.attr("y", 6)
-						.attr("dy", ".71em")
-						.style("text-anchor", "end")
-						.text("Steps");
+						// .append("text")
+						// .attr("transform", "rotate(-90)")
+						// .attr("y", 6)
+						// .attr("dy", ".71em")
+						// .style("text-anchor", "end")
+						// .text("Steps");
 
+					svg.append("path")
+					.datum(data)
+					.attr("class", "line")
+					.attr("d", line)
+					.attr("fill", "none")
+					.attr("stroke", "red")
 
-        })
+        });
 
     </script>
   </body>
