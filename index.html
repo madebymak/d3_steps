@@ -95,6 +95,17 @@
 						.attr("fill", "none")
 						.attr("stroke", "red");
 
+					svg.selectAll("dot")
+						.data(data)
+						.enter().append("circle")
+						.attr("r", 3.5)
+						.attr("cx", function(d) {
+							return x(d.date)
+						})
+						.attr("cy", function(d) {
+							return y(d.steps)
+						});
+
 						//Title of chart
 					svg.append("text")
 						.attr("x", (width + (margin.left + margin.right) )/ 2)
