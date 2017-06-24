@@ -86,28 +86,37 @@
 
 					svg.append("g")
 						.attr("class", "y axis")
-						.call(yAxis)
+						.call(yAxis);
 
 					svg.append("path")
-					.datum(data)
-					.attr("class", "line")
-					.attr("d", line)
-					.attr("fill", "none")
-					.attr("stroke", "red")
+						.datum(data)
+						.attr("class", "line")
+						.attr("d", line)
+						.attr("fill", "none")
+						.attr("stroke", "red");
 
-					var curtain =svg.append("rect")
+						//Title of chart
+					svg.append("text")
+						.attr("x", (width + (margin.left + margin.right) )/ 2)
+						.attr("y", -10)
+						.attr("text-anchor", "middle")
+						.text("Tracking Steps");
+
+					//Curtain to cover chart
+					var curtain = svg.append("rect")
 						.attr("x", -1 * width)
 						.attr("y", -1 * height)
 						.attr("height", height)
 						.attr("width", width)
 						.attr("class", "curtain")
 						.attr("transform", "rotate(180)")
-						.style("fill", "#FFFFFF")
+						.style("fill", "#FFFFFF");
 
+						//transition to move curtain
 						var t = svg.transition()
 							.delay(750)
 							.duration(8000)
-							.ease("linear")
+							.ease("linear");
 
 						t.select('rect.curtain')
 						.attr("width", 0);
