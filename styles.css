@@ -14,6 +14,10 @@ body {
   display: none;
 }
 
+.y.axis path {
+	display: none;
+}
+
 /*.axis path,
 .axis line {
   fill: none;
