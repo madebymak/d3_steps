@@ -2,7 +2,19 @@ body {
 
 }
 
-.axis path,
+.bar {
+  fill: steelblue;
+}
+
+.bar:hover {
+  fill: brown;
+}
+
+.x.path path {
+  display: none;
+}
+
+/*.axis path,
 .axis line {
   fill: none;
   stroke: #000;
@@ -24,4 +36,4 @@ div.tooltip {
     border: 1px solid blue;
     border-radius: 8px;
     pointer-events: none;
-}
+}*/

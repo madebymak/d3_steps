@@ -6,70 +6,77 @@
     <link rel="stylesheet" type="text/css" href="styles.css">
   </head>
   <body>
+		<svg width="960" height="500"></svg>
 
 		<script src="https://d3js.org/d3.v4.min.js"></script>
     <script>
 
-      //D3 margins
-      var margin = {
-        top: 20,
-        right: 20,
-        bottom: 30,
-        left: 50
-      };
+			var svg = d3.select("svg")
 
-      var width = 960 - margin.left - margin.right;
-      var height = 500 - margin.top - margin.bottom;
+	    //D3 margins
+	    var margin = {
+	      top: 20,
+	      right: 20,
+	      bottom: 30,
+	      left: 40
+	    };
+
+      var width = +svg.attr("width") - margin.left - margin.right;
+      var height = +svg.attr("height") - margin.top - margin.bottom;
 
       //converts to JS Date Obj
-      var parseDate = d3.time.format("%d-%b-%y").parse;
+			var parseDate = d3.timeParse("%d-%b-%y");
 
 			//date format for tooltip
-			var formatTime = d3.time.format("%b %e");
+			var formatTime = d3.timeFormat("%e");
 
       //x axis
-      var x = d3.time.scale()
-        .range([0, width])
+			var x = d3.scaleBand()
+				.rangeRound([0, width])
+				.padding(0.1);
 
       //y axis inverted
-      var y = d3.scale.linear()
-        .range([height, 0]);
+			var y = d3.scaleLinear()
+				.rangeRound([height, 0]);
 
-      //x axis text
-      var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient("bottom")
-				.tickFormat(d3.time.format("%b %e"))
-				.ticks(5)
+      // //x axis text
+      // var xAxis = d3.svg.axis()
+      //   .scale(x)
+      //   .orient("bottom")
+			// 	.tickFormat(d3.time.format("%b %e"))
+			// 	.ticks(5)
+			//
+      // //y axis value
+      // var yAxis = d3.svg.axis()
+      //   .scale(y)
+      //   .orient("left")
+			// 	.ticks(3)
+			// 	.outerTickSize(0);
+			//
+      // //D3 path generator
+      // var line = d3.svg.line()
+      //   .x(function(d) {
+      //     return x(d.date);
+      //   })
+      //   .y(function(d) {
+      //     return y(d.steps);
+      //   });
+			//
+      // //SVG container
+      // var svg = d3.select("body")
+      //   .append("svg")
+      //   .attr("width", width + margin.left + margin.right)
+      //   .attr("height", height + margin.top + margin.bottom)
+      //   .append("g")
+      //   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-      //y axis value
-      var yAxis = d3.svg.axis()
-        .scale(y)
-        .orient("left")
-				.ticks(3)
-				.outerTickSize(0);
+				var g = svg.append("g")
+    			.attr("transform", "translate(" + 0 + "," + 0+ ")");
 
-      //D3 path generator
-      var line = d3.svg.line()
-        .x(function(d) {
-          return x(d.date);
-        })
-        .y(function(d) {
-          return y(d.steps);
-        });
-
-      //SVG container
-      var svg = d3.select("body")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-				//create div for tooltip
-				var div = d3.select("body").append("div")
-					.attr("class", "tooltip")
-					.style("opacity", 0);
+				// //create div for tooltip
+				// var div = d3.select("body").append("div")
+				// 	.attr("class", "tooltip")
+				// 	.style("opacity", 0);
 
 				// //line for healthy number of steps
 				// svg.append("line")
@@ -96,82 +103,74 @@
 
           //converts data from file to usable JS data
           data.forEach(function(d) {
-            d.date = parseDate(d.date);
+						d.date = formatTime(parseDate(d.date));
             //the "+" converts string to number in JS
             d.steps = +d.steps;
           });
 
-					var xExtent = d3.extent(data, function(d) {
+					x.domain(data.map(function(d) {
 						return d.date;
-					});
+					}));
 
-					var xRange = xExtent[1] - xExtent[0]
-
-					var yExtent = d3.extent(data, function(d) {
+					y.domain([0, d3.max(data, function(d) {
 						return d.steps;
-					});
-					var yRange = yExtent[1] - yExtent[0];
-
-					// x.domain([xExtent[0] - (xRange * .05), xExtent[1] + (xRange * .05)]);
-
-					//adds padding to y axis
-					// y.domain([0, d3.max(yExtent)]);
-
-					y.domain([yExtent[0] - (yRange * .05), yExtent[1] + (yRange * .05)]);
-
-          // //set min and max dates for x axis
-
-					x.domain(xExtent);
-
-          // x.domain(d3.extent(data, function(d) {
-          //   return d.date;
-          // }));
-					//
-          // //set min and max steps for y axis
-          // y.domain(d3.extent(data, function(d) {
-          //   return d.steps;
-          // }));
+					})]);
 
           svg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + height + ")")
-						.call(xAxis);
+						.call(d3.axisBottom(x))
 
 					svg.append("g")
 						.attr("class", "y axis")
-						.call(yAxis);
+						.call(d3.axisLeft(y))
 
-					svg.append("path")
-						.datum(data)
-						.attr("class", "line")
-						.attr("d", line)
-						.attr("fill", "none")
-						.attr("stroke", "red")
+				  g.selectAll(".bar")
+				    .data(data)
+				    .enter().append("rect")
+				      .attr("class", "bar")
+				      .attr("x", function(d) {
+								return x(d.date);
+							})
+				      .attr("y", function(d) {
+								return y(d.steps);
+							})
+				      .attr("width", x.bandwidth())
+				      .attr("height", function(d) {
+								return height - y(d.steps);
+							 });
+
+					// svg.append("path")
+					// 	.datum(data)
+					// 	.attr("class", "line")
+					// 	.attr("d", line)
+					// 	.attr("fill", "none")
+					// 	.attr("stroke", "red")
 
 						//create dots for tooltip
-						svg.selectAll("dot")
-							.data(data)
-							.enter().append("circle")
-							.attr("r", 5)
-							.attr("cx", function(d) {
-								return x(d.date)
-							})
-							.attr("cy", function(d) {
-								return y(d.steps)
-							})
-							.on("mouseover", function(d) {
-								div.transition()
-									.duration(200)
-									.style("opacity", 0.9)
-								div.html(formatTime(d.date) + "</br>" +d.steps + " steps")
-									.style("left", (d3.event.pageX) + "px")
-									.style("top", (d3.event.pageY - 28) + "px");
-							})
-							.on("mouseout", function(d) {
-								div.transition()
-									.duration(500)
-									.style("opacity", 0);
-							});
+						// svg.selectAll("dot")
+						// 	.data(data)
+						// 	.enter().append("circle")
+						// 	.attr("r", 5)
+						// 	.attr("cx", function(d) {
+						// 		return x(d.date)
+						// 	})
+						// 	.attr("cy", function(d) {
+						// 		return y(d.steps)
+						// 	})
+						// 	.on("mouseover", function(d) {
+						// 		div.transition()
+						// 			.duration(200)
+						// 			.style("opacity", 0.9)
+						// 		div.html(formatTime(d.date) + "</br>" +d.steps + " steps")
+						// 			.style("left", (d3.event.pageX) + "px")
+						// 			.style("top", (d3.event.pageY - 28) + "px");
+						// 	})
+						// 	.on("mouseout", function(d) {
+						// 		div.transition()
+						// 			.duration(500)
+						// 			.style("opacity", 0);
+						// 	});
 
 						//Title of chart
 					svg.append("text")
