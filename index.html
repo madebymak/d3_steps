@@ -28,7 +28,7 @@
 			var parseDate = d3.timeParse("%d-%b-%y");
 
 			//date format for tooltip
-			var formatTime = d3.timeFormat("%e");
+			var formatTime = d3.timeFormat("%b %e");
 
       //x axis
 			var x = d3.scaleBand()
@@ -112,14 +112,25 @@
 						return d.date;
 					}));
 
-					y.domain([0, d3.max(data, function(d) {
+					var maxY = d3.max(data, function(d) {
 						return d.steps;
-					})]);
+					});
+
+					y.domain([-(maxY * .02), maxY]);
+
+					// y.domain([0, d3.max(data, function(d) {
+					// 	return d.steps;
+					// })]);
 
           svg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + height + ")")
 						.call(d3.axisBottom(x))
+						.selectAll("text")
+						.style("text-anchor", "end")
+						.attr("dx", "-.8em")
+						.attr("dy", "-.55em")
+						.attr("transform", "rotate(-90)" );
 
 					svg.append("g")
 						.attr("class", "y axis")
