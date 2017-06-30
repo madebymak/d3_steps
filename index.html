@@ -72,6 +72,9 @@
 
 				var g = svg.append("g")
     			.attr("transform", "translate(" + 0 + "," + 0+ ")");
+					// .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
 
 				// //create div for tooltip
 				// var div = d3.select("body").append("div")
@@ -116,6 +119,7 @@
 						return d.steps;
 					});
 
+					//set min bar height
 					y.domain([-(maxY * .02), maxY]);
 
 					// y.domain([0, d3.max(data, function(d) {
@@ -130,11 +134,11 @@
 						.style("text-anchor", "end")
 						.attr("dx", "-.8em")
 						.attr("dy", "-.55em")
-						.attr("transform", "rotate(-90)" );
+						.attr("transform", "rotate(-90)");
 
 					svg.append("g")
 						.attr("class", "y axis")
-						.call(d3.axisLeft(y))
+						.call(d3.axisRight(y))
 
 				  g.selectAll(".bar")
 				    .data(data)
