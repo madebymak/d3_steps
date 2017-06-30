@@ -76,10 +76,10 @@
 
 
 
-				// //create div for tooltip
-				// var div = d3.select("body").append("div")
-				// 	.attr("class", "tooltip")
-				// 	.style("opacity", 0);
+				//create div for tooltip
+				var div = d3.select("body").append("div")
+					.attr("class", "tooltip")
+					.style("opacity", 0);
 
 				// //line for healthy number of steps
 				// svg.append("line")
@@ -155,6 +155,19 @@
 				      .attr("width", x.bandwidth())
 				      .attr("height", function(d) {
 								return height - y(d.steps);
+							 })
+							 .on("mouseover", function(d) {
+								 div.transition()
+									 .duration(200)
+									 .style("opacity", 0.9)
+								 div.html(+d.steps + " steps")
+									 .style("left", (d3.event.pageX) + "px")
+									 .style("top", (d3.event.pageY - 28) + "px");
+							 })
+							 .on("mouseout", function(d) {
+								 div.transition()
+									 .duration(500)
+									 .style("opacity", 0);
 							 });
 
 					// svg.append("path")
@@ -175,19 +188,19 @@
 						// 	.attr("cy", function(d) {
 						// 		return y(d.steps)
 						// 	})
-						// 	.on("mouseover", function(d) {
-						// 		div.transition()
-						// 			.duration(200)
-						// 			.style("opacity", 0.9)
-						// 		div.html(formatTime(d.date) + "</br>" +d.steps + " steps")
-						// 			.style("left", (d3.event.pageX) + "px")
-						// 			.style("top", (d3.event.pageY - 28) + "px");
-						// 	})
-						// 	.on("mouseout", function(d) {
-						// 		div.transition()
-						// 			.duration(500)
-						// 			.style("opacity", 0);
-						// 	});
+							// .on("mouseover", function(d) {
+							// 	div.transition()
+							// 		.duration(200)
+							// 		.style("opacity", 0.9)
+							// 	div.html(formatTime(d.date) + "</br>" +d.steps + " steps")
+							// 		.style("left", (d3.event.pageX) + "px")
+							// 		.style("top", (d3.event.pageY - 28) + "px");
+							// })
+							// .on("mouseout", function(d) {
+							// 	div.transition()
+							// 		.duration(500)
+							// 		.style("opacity", 0);
+							// });
 
 						//Title of chart
 					svg.append("text")
