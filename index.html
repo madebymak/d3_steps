@@ -114,7 +114,6 @@
 								return x(d.date);
 							})
 							.attr("y", height)
-
 				      .attr("width", x.bandwidth())
 							.attr("height", 0)
 							.on("mouseover", function(d) {
@@ -134,10 +133,10 @@
 							 bar.transition()
 							   .duration(3000)
 								 .delay(100)
-							  //  .delay(function(d, i) {
-								// 	 return i * 1000
-								//  })
-								// .attr("height", 0)
+							   .delay(function(d, i) {
+									 return i * 100
+								 })
+								.attr("height", 0)
 								.attr("y", function(d) {
 									return y(d.steps);
 								})
