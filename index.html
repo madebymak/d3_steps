@@ -50,26 +50,6 @@
 					.attr("class", "tooltip")
 					.style("opacity", 0);
 
-				// //line for healthy number of steps
-				// svg.append("line")
-				// 	.attr("class", "line")
-				// 	.attr("x1", 0)
-				// 	.attr("y1", 140)
-				// 	.attr("x2", width)
-				// 	.attr("y2", 140)
-				// 	.attr("fill", "none")
-				// 	.attr("stroke", "green")
-				//
-				// //line for average number of steps
-				// svg.append("line")
-				// 	.attr("class", "line")
-				// 	.attr("x1", 0)
-				// 	.attr("y1", 300)
-				// 	.attr("x2", width)
-				// 	.attr("y2", 300)
-				// 	.attr("fill", "none")
-				// 	.attr("stroke", "blue")
-
         //load data
         d3.tsv("data.tsv", function(err, data) {
 
@@ -131,7 +111,7 @@
 							 })
 
 							 bar.transition()
-							   .duration(3000)
+							   .duration(2000)
 								 .delay(100)
 							   .delay(function(d, i) {
 									 return i * 100
