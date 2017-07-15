@@ -1,155 +1,163 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Steps</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-  </head>
-  <body>
-		<svg width="960" height="500"></svg>
 
-		<script src="https://d3js.org/d3.v4.min.js"></script>
-    <script>
+<head>
+	<meta charset="utf-8">
+	<title>Steps</title>
+	<link rel="stylesheet" type="text/css" href="styles.css">
+</head>
 
-			var svg = d3.select("svg")
+<body>
+	<svg width="960" height="500"></svg>
 
-	    //D3 margins
-	    var margin = {
-	      top: 20,
-	      right: 20,
-	      bottom: 30,
-	      left: 40
-	    };
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script>
+		var svg = d3.select("svg")
 
-      var width = +svg.attr("width") - margin.left - margin.right;
-      var height = +svg.attr("height") - margin.top - margin.bottom;
+		//D3 margins
+		var margin = {
+			top: 20,
+			right: 20,
+			bottom: 30,
+			left: 40
+		};
 
-      //converts to JS Date Obj
-			var parseDate = d3.timeParse("%d-%b-%y");
+		var width = +svg.attr("width") - margin.left - margin.right;
+		var height = +svg.attr("height") - margin.top - margin.bottom;
 
-			//date format for tooltip
-			var formatTime = d3.timeFormat("%b %e");
+		//converts to JS Date Obj
+		var parseDate = d3.timeParse("%d-%b-%y");
 
-      //x axis
-			var x = d3.scaleBand()
-				.rangeRound([0, width])
-				.padding(0.1);
+		//date format for tooltip
+		var formatTime = d3.timeFormat("%b %e");
 
-      //y axis inverted
-			var y = d3.scaleLinear()
-				.rangeRound([height, 0]);
+		//x axis
+		var x = d3.scaleBand()
+			.rangeRound([0, width])
+			.padding(0.1);
 
-				var g = svg.append("g")
-    			.attr("transform", "translate(" + 0 + "," + 0+ ")");
-					// .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		//y axis inverted
+		var y = d3.scaleLinear()
+			.rangeRound([height, 0]);
 
-				//create div for tooltip
-				var div = d3.select("body").append("div")
-					.attr("class", "tooltip")
-					.style("opacity", 0);
+		var g = svg.append("g")
+			.attr("transform", "translate(" + 0 + "," + 0 + ")");
+		// .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        //load data
-        d3.tsv("data.tsv", function(err, data) {
+		//create div for tooltip
+		var div = d3.select("body").append("div")
+			.attr("class", "tooltip")
+			.style("opacity", 0);
 
-          //converts data from file to usable JS data
-          data.forEach(function(d) {
-						d.date = formatTime(parseDate(d.date));
-            //the "+" converts string to number in JS
-            d.steps = +d.steps;
-          });
+		//load data
+		d3.tsv("data.tsv", function(err, data) {
 
-					x.domain(data.map(function(d) {
-						return d.date;
-					}));
+			//converts data from file to usable JS data
+			data.forEach(function(d) {
+				d.date = formatTime(parseDate(d.date));
+				//the "+" converts string to number in JS
+				d.steps = +d.steps;
+			});
 
-					var maxY = d3.max(data, function(d) {
-						return d.steps;
-					});
+			x.domain(data.map(function(d) {
+				return d.date;
+			}));
 
-					//set min bar height
-					y.domain([-(maxY * .02), maxY]);
+			var maxY = d3.max(data, function(d) {
+				return d.steps;
+			});
 
-					svg.append("linearGradient")
-				      .attr("id", "temperature-gradient")
-				      .attr("gradientUnits", "userSpaceOnUse")
-				      .attr("x1", 0)
-							.attr("y1", y(0))
-				      .attr("x2", 0)
-							.attr("y2", y(10000))
-							// .attr("spreadMethod", "pad")
-				    .selectAll("stop")
-				      .data([
-								{offset: "25%", color: "#fa661e"},
-								{offset: "80%", color: "#fea700"}
-				      ])
-				    .enter().append("stop")
-				      .attr("offset", function(d) { return d.offset; })
-				      .attr("stop-color", function(d) { return d.color; });
+			//set min bar height
+			y.domain([-(maxY * .02), maxY]);
 
-							//////////////
+			svg.append("linearGradient")
+				.attr("id", "temperature-gradient")
+				.attr("gradientUnits", "userSpaceOnUse")
+				.attr("x1", 0)
+				.attr("y1", y(0))
+				.attr("x2", 0)
+				.attr("y2", y(10000))
+				// .attr("spreadMethod", "pad")
+				.selectAll("stop")
+				.data([{
+					offset: "25%",
+					color: "#fa661e"
+				}, {
+					offset: "80%",
+					color: "#fea700"
+				}])
+				.enter().append("stop")
+				.attr("offset", function(d) {
+					return d.offset;
+				})
+				.attr("stop-color", function(d) {
+					return d.color;
+				});
 
-          svg.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-						.call(d3.axisBottom(x))
-						.selectAll("text")
-						.style("text-anchor", "end")
-						.attr("dx", "-.8em")
-						.attr("dy", "-.55em")
-						.attr("transform", "rotate(-90)");
+			//////////////
 
-					svg.append("g")
-						.attr("class", "y axis")
-						.call(d3.axisRight(y).ticks(3))
-						.attr("transform", "translate(" + width + ",0)")
+			svg.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height + ")")
+				.call(d3.axisBottom(x))
+				.selectAll("text")
+				.style("text-anchor", "end")
+				.attr("dx", "-.8em")
+				.attr("dy", "-.55em")
+				.attr("transform", "rotate(-90)");
 
-				  var bar = g.selectAll(".bar")
-				    .data(data)
-				    .enter().append("rect")
-				      .attr("class", "bar")
-				      .attr("x", function(d) {
-								return x(d.date);
-							})
-							.attr("y", height)
-				      .attr("width", x.bandwidth())
-							.attr("height", 0)
-							.on("mouseover", function(d) {
-								 div.transition()
-									 .duration(200)
-									 .style("opacity", 0.9)
-								 div.html(+d.steps + " steps")
-									 .style("left", (d3.event.pageX) + "px")
-									 .style("top", (d3.event.pageY - 28) + "px");
-							 })
-							 .on("mouseout", function(d) {
-								 div.transition()
-									 .duration(500)
-									 .style("opacity", 0);
-							 })
+			svg.append("g")
+				.attr("class", "y axis")
+				.call(d3.axisRight(y).ticks(3))
+				.attr("transform", "translate(" + width + ",0)")
 
-							 bar.transition()
-							   .duration(2000)
-								 .delay(100)
-							   .delay(function(d, i) {
-									 return i * 100
-								 })
-								.attr("height", 0)
-								.attr("y", function(d) {
-									return y(d.steps);
-								})
-							  .attr("height", function(d) {
-										return height - y(d.steps)
-							 })
+			var bar = g.selectAll(".bar")
+				.data(data)
+				.enter().append("rect")
+				.attr("class", "bar")
+				.attr("x", function(d) {
+					return x(d.date);
+				})
+				.attr("y", height)
+				.attr("width", x.bandwidth())
+				.attr("height", 0)
+				.on("mouseover", function(d) {
+					div.transition()
+						.duration(200)
+						.style("opacity", 0.9)
+					div.html(+d.steps + " steps")
+						.style("left", (d3.event.pageX) + "px")
+						.style("top", (d3.event.pageY - 28) + "px");
+				})
+				.on("mouseout", function(d) {
+					div.transition()
+						.duration(500)
+						.style("opacity", 0);
+				})
 
-						//Title of chart
-					svg.append("text")
-						.attr("x", (width + (margin.left + margin.right) )/ 2)
-						.attr("y", -10)
-						.attr("text-anchor", "middle")
-						.text("Tracking Steps");
+			bar.transition()
+				.duration(2000)
+				.delay(100)
+				.delay(function(d, i) {
+					return i * 100
+				})
+				.attr("height", 0)
+				.attr("y", function(d) {
+					return y(d.steps);
+				})
+				.attr("height", function(d) {
+					return height - y(d.steps)
+				})
 
-        });
+			//Title of chart
+			svg.append("text")
+				.attr("x", (width + (margin.left + margin.right)) / 2)
+				.attr("y", -10)
+				.attr("text-anchor", "middle")
+				.text("Tracking Steps");
 
-    </script>
-  </body>
+		});
+	</script>
+</body>
+
 </html>
