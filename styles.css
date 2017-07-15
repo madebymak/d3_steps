@@ -3,11 +3,12 @@ body {
 }
 
 .bar {
-  fill: steelblue;
+  /*fill: red;*/
+	fill: url(#temperature-gradient);
 }
 
 .bar:hover {
-  fill: brown;
+  fill: #ffcc00;
 }
 
 .x.path path {
