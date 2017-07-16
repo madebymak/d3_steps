@@ -9,6 +9,18 @@
 
 <body>
 	<svg class="svg" width="960" height="500"></svg>
+	<div>
+		<input name="updateButton"
+           type="button"
+           value="Month"
+					 onclick=""
+           />
+		 <input name="updateButton"
+	           type="button"
+	           value="Month"
+						 onclick=""
+	           />
+</div>
 
 	<script src="https://d3js.org/d3.v4.min.js"></script>
 	<script>
@@ -149,24 +161,6 @@
 					return height - y(d.steps)
 				})
 
-			//Title of chart
-			svg.append("text")
-				.attr("x", (width + (margin.left + margin.right)) / 2)
-				.attr("y", -10)
-				.attr("text-anchor", "middle")
-				.text("Tracking Steps");
-
-		});
-
-		function rectangle(x, y, width, height, radius) {
-		  return "M" + x + "," + y
-		       + "h" + (width - radius)
-		       + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius
-		       + "v" + (height - 2 * radius)
-		       + "a" + radius + "," + radius + " 0 0 1 " + -radius + "," + radius
-		       + "h" + (radius - width)
-		       + "z";
-		}
 	</script>
 </body>
 
