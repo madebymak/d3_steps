@@ -3,6 +3,11 @@ body {
 	padding: 10px;
 }
 
+.svg {
+	/*border: 1px solid red;*/
+	padding: 2%;
+}
+
 .bar {
   /*fill: red;*/
 	fill: url(#temperature-gradient);

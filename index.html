@@ -8,7 +8,7 @@
 </head>
 
 <body>
-	<svg width="960" height="500"></svg>
+	<svg class="svg" width="960" height="500"></svg>
 
 	<script src="https://d3js.org/d3.v4.min.js"></script>
 	<script>
@@ -133,17 +133,6 @@
 						.duration(500)
 						.style("opacity", 0);
 				})
-
-				bar.enter().append("path")
-			    .attr("d", function(d) {
-			      return rectangle(x(0), y(d.date), x(d.steps) - x(0), y.rangeBand(), 10);
-			    });
-
-				// bar.attr("d", function(d,i){
-				// 	return console.log("rect", d, i);
-				// 	// return rectangle(10+40*i,100-d,20,d,5)
-				// });
-
 
 			//bar animation
 			bar.transition()
