@@ -161,6 +161,15 @@
 					return height - y(d.steps)
 				})
 
+			//Title of chart
+			svg.append("text")
+				.attr("x", (width + (margin.left + margin.right)) / 2)
+				.attr("y", -10)
+				.attr("text-anchor", "middle")
+				.text("Tracking Steps");
+
+		});
+
 	</script>
 </body>
 
