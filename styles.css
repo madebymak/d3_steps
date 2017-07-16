@@ -1,4 +1,5 @@
 body {
+	background-color: #efeff4;
 	padding: 10px;
 }
 
@@ -26,8 +27,8 @@ div.tooltip {
     height: 28px;
     padding: 2px;
     font: 12px sans-serif;
-    background: #FFFFFF;
-    border: 1px solid blue;
+    background: #efeff4;
+    border: 1px solid #ff9500;
     border-radius: 8px;
     pointer-events: none;
 }

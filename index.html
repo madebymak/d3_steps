@@ -42,7 +42,6 @@
 
 		var g = svg.append("g")
 			.attr("transform", "translate(" + 0 + "," + 0 + ")");
-		// .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 		//create div for tooltip
 		var div = d3.select("body").append("div")
@@ -70,6 +69,7 @@
 			//set min bar height
 			y.domain([-(maxY * .02), maxY]);
 
+			//gradient
 			svg.append("linearGradient")
 				.attr("id", "temperature-gradient")
 				.attr("gradientUnits", "userSpaceOnUse")
@@ -77,12 +77,12 @@
 				.attr("y1", y(0))
 				.attr("x2", 0)
 				.attr("y2", y(10000))
-				// .attr("spreadMethod", "pad")
 				.selectAll("stop")
 				.data([{
 					offset: "25%",
 					color: "#fa661e"
-				}, {
+				},
+				{
 					offset: "80%",
 					color: "#fea700"
 				}])
@@ -93,8 +93,6 @@
 				.attr("stop-color", function(d) {
 					return d.color;
 				});
-
-			//////////////
 
 			svg.append("g")
 				.attr("class", "x axis")
@@ -114,6 +112,7 @@
 			var bar = g.selectAll(".bar")
 				.data(data)
 				.enter().append("rect")
+				// .attr("rx", 8)         // set the x corner curve radius
 				.attr("class", "bar")
 				.attr("x", function(d) {
 					return x(d.date);
@@ -135,6 +134,18 @@
 						.style("opacity", 0);
 				})
 
+				bar.enter().append("path")
+			    .attr("d", function(d) {
+			      return rectangle(x(0), y(d.date), x(d.steps) - x(0), y.rangeBand(), 10);
+			    });
+
+				// bar.attr("d", function(d,i){
+				// 	return console.log("rect", d, i);
+				// 	// return rectangle(10+40*i,100-d,20,d,5)
+				// });
+
+
+			//bar animation
 			bar.transition()
 				.duration(2000)
 				.delay(100)
@@ -157,6 +168,16 @@
 				.text("Tracking Steps");
 
 		});
+
+		function rectangle(x, y, width, height, radius) {
+		  return "M" + x + "," + y
+		       + "h" + (width - radius)
+		       + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius
+		       + "v" + (height - 2 * radius)
+		       + "a" + radius + "," + radius + " 0 0 1 " + -radius + "," + radius
+		       + "h" + (radius - width)
+		       + "z";
+		}
 	</script>
 </body>
 
