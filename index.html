@@ -9,7 +9,7 @@
 
 <body>
 	<svg class="svg" width="960" height="500"></svg>
-	<div>
+	<!-- <div>
 		<input name="updateButton"
            type="button"
            value="Month"
@@ -20,7 +20,7 @@
 	           value="Month"
 						 onclick=""
 	           />
-</div>
+</div> -->
 
 	<script src="https://d3js.org/d3.v4.min.js"></script>
 	<script>
@@ -69,6 +69,15 @@
 				//the "+" converts string to number in JS
 				d.steps = +d.steps;
 			});
+
+			//averaging number of steps
+			var averageSteps = d3.nest()
+				.rollup(function(v) {
+					return d3.mean(v, function(d) {
+						return d.steps;
+					});
+				})
+				.entries(data)
 
 			x.domain(data.map(function(d) {
 				return d.date;
