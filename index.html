@@ -79,6 +79,11 @@
 				})
 				.entries(data)
 
+			svg.append("text")
+				.attr("y", 10)
+				.attr("text-anchor", "left")
+				.text("Daily Average: " + Math.ceil(averageSteps) + " steps");
+
 			x.domain(data.map(function(d) {
 				return d.date;
 			}));
@@ -176,7 +181,6 @@
 				.attr("y", -10)
 				.attr("text-anchor", "middle")
 				.text("Tracking Steps");
-
 		});
 
 	</script>
