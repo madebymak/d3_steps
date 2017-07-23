@@ -57,21 +57,147 @@
 
 		var currentMonth = "may.tsv";
 
+		//load data
+		d3.tsv(currentMonth, function(err, data) {
+
+			//converts data from file to usable JS data
+			data.forEach(function(d) {
+				d.date = formatTime(parseDate(d.date));
+				//the "+" converts string to number in JS
+				d.steps = +d.steps;
+			});
+
+			//averaging number of steps
+			var averageSteps = d3.nest()
+				.rollup(function(v) {
+					return d3.mean(v, function(d) {
+						return d.steps;
+					});
+				})
+				.entries(data)
+
+			// svg.append("text")
+			// 	.attr("y", 10)
+			// 	.attr("text-anchor", "left")
+			// 	.text("Daily Average: " + Math.ceil(averageSteps) + " steps");
+
+			x.domain(data.map(function(d) {
+				return d.date;
+			}));
+
+			var maxY = d3.max(data, function(d) {
+				return d.steps;
+			});
+
+			//set min bar height
+			y.domain([-(maxY * .02), maxY]);
+
+			//gradient
+			svg.append("linearGradient")
+				.attr("id", "temperature-gradient")
+				.attr("gradientUnits", "userSpaceOnUse")
+				.attr("x1", 0)
+				.attr("y1", y(0))
+				.attr("x2", 0)
+				.attr("y2", y(10000))
+				.selectAll("stop")
+				.data([{
+					offset: "25%",
+					color: "#fa661e"
+				},
+				{
+					offset: "80%",
+					color: "#fea700"
+				}])
+				.enter().append("stop")
+				.attr("offset", function(d) {
+					return d.offset;
+				})
+				.attr("stop-color", function(d) {
+					return d.color;
+				});
+
+			svg.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height + ")")
+				.call(d3.axisBottom(x))
+				.selectAll("text")
+				.style("text-anchor", "end")
+				.attr("dx", "-.8em")
+				.attr("dy", "-.55em")
+				.attr("transform", "rotate(-90)");
+
+			svg.append("g")
+				.attr("class", "y axis")
+				.call(d3.axisRight(y).ticks(3))
+				.attr("transform", "translate(" + width + ",0)")
+
+			var bar = g.selectAll(".bar")
+				.data(data)
+				.enter().append("rect")
+				// .attr("rx", 8)         // set the x corner curve radius
+				.attr("class", "bar")
+				.attr("x", function(d) {
+					return x(d.date);
+				})
+				.attr("y", height)
+				.attr("width", x.bandwidth())
+				.attr("height", 0)
+				.on("mouseover", function(d) {
+					div.transition()
+						.duration(200)
+						.style("opacity", 0.9)
+					div.html(+d.steps + " steps")
+						.style("left", (d3.event.pageX) + "px")
+						.style("top", (d3.event.pageY - 28) + "px");
+				})
+				.on("mouseout", function(d) {
+					div.transition()
+						.duration(500)
+						.style("opacity", 0);
+				})
+
+			//bar animation
+			bar.transition()
+				.duration(2000)
+				.delay(100)
+				.delay(function(d, i) {
+					return i * 100
+				})
+				.attr("height", 0)
+				.attr("y", function(d) {
+					return y(d.steps);
+				})
+				.attr("height", function(d) {
+					return height - y(d.steps)
+				})
+
+			// //Title of chart
+			// svg.append("text")
+			// 	.attr("x", (width + (margin.left + margin.right)) / 2)
+			// 	.attr("y", -10)
+			// 	.attr("text-anchor", "middle")
+			// 	.text("Tracking Steps");
+
+		});
+
 		function nextMonth() {
 
-  switch (currentMonth) {
-    case "may.tsv":
-      currentMonth = "jun.tsv";
-      break;
+	switch (currentMonth) {
+		case "may.tsv":
+			currentMonth = "jun.tsv";
+			break;
 
-    case "jun.tsv":
-      currentMonth = "may.tsv";
-      break;
-  }
+		case "jun.tsv":
+			currentMonth = "jul.tsv";
+			break;
 
-	d3.selectAll(".bar, .tick").remove();
+		case "jul.tsv":
+			currentMonth = "may.tsv";
+			break;
+	}
 
-
+	d3.selectAll(".bar, .tick, .x.axis").remove();
 
 	//load data
 	d3.tsv(currentMonth, function(err, data) {
@@ -92,11 +218,6 @@
 			})
 			.entries(data)
 
-		// svg.append("text")
-		// 	.attr("y", 10)
-		// 	.attr("text-anchor", "left")
-		// 	.text("Daily Average: " + Math.ceil(averageSteps) + " steps");
-
 		x.domain(data.map(function(d) {
 			return d.date;
 		}));
@@ -108,30 +229,24 @@
 		//set min bar height
 		y.domain([-(maxY * .02), maxY]);
 
-		//gradient
-		svg.append("linearGradient")
-			.attr("id", "temperature-gradient")
-			.attr("gradientUnits", "userSpaceOnUse")
-			.attr("x1", 0)
-			.attr("y1", y(0))
-			.attr("x2", 0)
-			.attr("y2", y(10000))
-			.selectAll("stop")
-			.data([{
-				offset: "25%",
-				color: "#fa661e"
-			},
-			{
-				offset: "80%",
-				color: "#fea700"
-			}])
-			.enter().append("stop")
-			.attr("offset", function(d) {
-				return d.offset;
-			})
-			.attr("stop-color", function(d) {
-				return d.color;
-			});
+		// var svg = d3.select("body").transition();
+
+		//x axis transition
+		// svg.select(".x.axis")
+		// 	.duration(750)
+		// 	.attr("transform", "translate(0," + height + ")")
+		// 	.call(d3.axisBottom(x))
+		// 	.selectAll("text")
+		// 	.style("text-anchor", "end")
+		// 	.attr("dx", "-.8em")
+		// 	.attr("dy", "-.55em")
+		// 	.attr("transform", "rotate(-90)");
+		//
+		//y axis transition
+		// svg.select(".y.axis")
+		// 	.duration(750)
+		// 	.call(d3.axisRight(y).ticks(3))
+		// 	.attr("transform", "translate(" + width + ",0)");
 
 		svg.append("g")
 			.attr("class", "x axis")
@@ -146,7 +261,7 @@
 		svg.append("g")
 			.attr("class", "y axis")
 			.call(d3.axisRight(y).ticks(3))
-			.attr("transform", "translate(" + width + ",0)")
+			.attr("transform", "translate(" + width + ",0)");
 
 		var bar = g.selectAll(".bar")
 			.data(data)
@@ -188,12 +303,6 @@
 				return height - y(d.steps)
 			})
 
-		//Title of chart
-		svg.append("text")
-			.attr("x", (width + (margin.left + margin.right)) / 2)
-			.attr("y", -10)
-			.attr("text-anchor", "middle")
-			.text("Tracking Steps");
 	});
 
 	d3.select("#month").remove();
@@ -206,129 +315,6 @@
 
 	console.log(currentMonth);
 }
-
-		// //load data
-		// d3.tsv(currentMonth, function(err, data) {
-		//
-		// 	//converts data from file to usable JS data
-		// 	data.forEach(function(d) {
-		// 		d.date = formatTime(parseDate(d.date));
-		// 		//the "+" converts string to number in JS
-		// 		d.steps = +d.steps;
-		// 	});
-		//
-		// 	//averaging number of steps
-		// 	var averageSteps = d3.nest()
-		// 		.rollup(function(v) {
-		// 			return d3.mean(v, function(d) {
-		// 				return d.steps;
-		// 			});
-		// 		})
-		// 		.entries(data)
-		//
-		// 	// svg.append("text")
-		// 	// 	.attr("y", 10)
-		// 	// 	.attr("text-anchor", "left")
-		// 	// 	.text("Daily Average: " + Math.ceil(averageSteps) + " steps");
-		//
-		// 	x.domain(data.map(function(d) {
-		// 		return d.date;
-		// 	}));
-		//
-		// 	var maxY = d3.max(data, function(d) {
-		// 		return d.steps;
-		// 	});
-		//
-		// 	//set min bar height
-		// 	y.domain([-(maxY * .02), maxY]);
-		//
-		// 	//gradient
-		// 	svg.append("linearGradient")
-		// 		.attr("id", "temperature-gradient")
-		// 		.attr("gradientUnits", "userSpaceOnUse")
-		// 		.attr("x1", 0)
-		// 		.attr("y1", y(0))
-		// 		.attr("x2", 0)
-		// 		.attr("y2", y(10000))
-		// 		.selectAll("stop")
-		// 		.data([{
-		// 			offset: "25%",
-		// 			color: "#fa661e"
-		// 		},
-		// 		{
-		// 			offset: "80%",
-		// 			color: "#fea700"
-		// 		}])
-		// 		.enter().append("stop")
-		// 		.attr("offset", function(d) {
-		// 			return d.offset;
-		// 		})
-		// 		.attr("stop-color", function(d) {
-		// 			return d.color;
-		// 		});
-		//
-		// 	svg.append("g")
-		// 		.attr("class", "x axis")
-		// 		.attr("transform", "translate(0," + height + ")")
-		// 		.call(d3.axisBottom(x))
-		// 		.selectAll("text")
-		// 		.style("text-anchor", "end")
-		// 		.attr("dx", "-.8em")
-		// 		.attr("dy", "-.55em")
-		// 		.attr("transform", "rotate(-90)");
-		//
-		// 	svg.append("g")
-		// 		.attr("class", "y axis")
-		// 		.call(d3.axisRight(y).ticks(3))
-		// 		.attr("transform", "translate(" + width + ",0)")
-		//
-		// 	var bar = g.selectAll(".bar")
-		// 		.data(data)
-		// 		.enter().append("rect")
-		// 		// .attr("rx", 8)         // set the x corner curve radius
-		// 		.attr("class", "bar")
-		// 		.attr("x", function(d) {
-		// 			return x(d.date);
-		// 		})
-		// 		.attr("y", height)
-		// 		.attr("width", x.bandwidth())
-		// 		.attr("height", 0)
-		// 		.on("mouseover", function(d) {
-		// 			div.transition()
-		// 				.duration(200)
-		// 				.style("opacity", 0.9)
-		// 			div.html(+d.steps + " steps")
-		// 				.style("left", (d3.event.pageX) + "px")
-		// 				.style("top", (d3.event.pageY - 28) + "px");
-		// 		})
-		// 		.on("mouseout", function(d) {
-		// 			div.transition()
-		// 				.duration(500)
-		// 				.style("opacity", 0);
-		// 		})
-		//
-		// 	//bar animation
-		// 	bar.transition()
-		// 		.duration(2000)
-		// 		.delay(100)
-		// 		.delay(function(d, i) {
-		// 			return i * 100
-		// 		})
-		// 		.attr("height", 0)
-		// 		.attr("y", function(d) {
-		// 			return y(d.steps);
-		// 		})
-		// 		.attr("height", function(d) {
-		// 			return height - y(d.steps)
-		// 		})
-		//
-		// 	//Title of chart
-		// 	svg.append("text")
-		// 		.attr("x", (width + (margin.left + margin.right)) / 2)
-		// 		.attr("y", -10)
-		// 		.attr("text-anchor", "middle")
-		// 		.text("Tracking Steps");
-		// });
 
 	</script>
 </body>
